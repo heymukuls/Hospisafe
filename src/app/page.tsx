@@ -1,165 +1,51 @@
-"use client";
+import Link from "next/link";
+import { Activity, ArrowRight, BadgeCheck, CalendarClock, CheckCircle2, ClipboardCheck, ClipboardList, Clock3, ShieldCheck, Smartphone, Sparkles, Users, Workflow } from "lucide-react";
+import LandingParallax from "./landing-parallax";
 
-import { useEffect, useState } from "react";
-import { Activity, ArrowRight, Check, Eye, EyeOff, LockKeyhole, ShieldCheck, Sparkles } from "lucide-react";
+const features = [
+  { icon: CalendarClock, title: "Daily sanitation routines", text: "Plan repeatable cleaning rounds with a due time, assigned team member and clear instructions." },
+  { icon: ClipboardList, title: "Special cleaning tasks", text: "Respond to spills, urgent requests and one-off sanitation work with priorities and due dates." },
+  { icon: Users, title: "Housekeeping team coordination", text: "Create staff accounts, manage profiles and assign several jobs to the same employee." },
+  { icon: ClipboardCheck, title: "Area-specific checklists", text: "Give every cleaning task clear steps for washrooms, rooms, beds, waiting areas and shared spaces." },
+  { icon: BadgeCheck, title: "Completion review", text: "Staff submit completed checklists; supervisors and administrators review and verify the work." },
+  { icon: Activity, title: "Accountable hygiene records", text: "Keep dated assignments, progress and activity history connected to each cleaning job." },
+];
 
-function BrandMark({ size = 52 }: { size?: number }) {
-  return (
-    <div
-      className="grid place-items-center rounded-2xl text-white shadow-lg"
-      style={{
-        width: size,
-        height: size,
-        background: "linear-gradient(145deg, #159b82, #123b43)",
-        boxShadow: "0 12px 28px rgba(17, 128, 110, .22)"
-      }}
-      aria-hidden="true"
-    >
-      <ShieldCheck size={size * .56} strokeWidth={1.8} />
-    </div>
-  );
+const workflow = [
+  { n: "01", title: "Plan cleaning rounds", text: "Set routine sanitation work and define what needs attention each day." },
+  { n: "02", title: "Assign the team", text: "Choose responsible housekeeping staff, priorities and due times." },
+  { n: "03", title: "Complete each checklist", text: "Staff follow the task steps and record completion from the mobile-friendly portal." },
+  { n: "04", title: "Review and verify", text: "Administrators review submitted work and keep an auditable completion record." },
+];
+
+function Brand() {
+  return <Link href="/" className="flex items-center gap-2.5" aria-label="Hospisafe home"><img src="/icon.svg" alt="" className="h-10 w-10 rounded-xl"/><span className="text-xl font-bold tracking-tight text-[#153a40]">Hospisafe</span></Link>;
 }
 
 export default function Home() {
-  const [showSplash, setShowSplash] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [notice, setNotice] = useState("");
+  return <main className="min-h-screen overflow-hidden bg-[#f5faf8] text-[#153a40]">
+    <header className="sticky top-0 z-40 border-b border-[#e1eeeb] bg-white/90 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 sm:px-8"><Brand/><nav className="hidden items-center gap-7 text-sm font-medium text-[#607b76] md:flex"><a href="#features" className="hover:text-[#117d6b]">Features</a><a href="#workflow" className="hover:text-[#117d6b]">How it works</a><a href="#for-teams" className="hover:text-[#117d6b]">For teams</a></nav><Link href="/login" className="inline-flex items-center gap-2 rounded-xl bg-[#117d6b] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0e6b5c]">Sign in <ArrowRight size={16}/></Link></div>
+    </header>
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => setShowSplash(false), 3000);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  if (showSplash) {
-    return (
-      <main className="relative grid min-h-[100svh] place-items-center overflow-hidden bg-[#123b43] px-6 text-white">
-        <div className="splash-orb absolute inset-0" />
-        <div className="grid-pattern absolute inset-0 opacity-40" />
-        <div className="relative flex flex-col items-center text-center">
-          <div className="mb-6 rounded-[28px] bg-white p-3 shadow-2xl shadow-black/20">
-            <BrandMark size={82} />
-          </div>
-          <div className="text-4xl font-bold tracking-[-0.06em]">Hospisafe</div>
-          <p className="mt-2 text-sm tracking-wide text-teal-100">Hospital Hygiene &amp; Sanitation Management</p>
-          <div className="mt-12 flex items-center gap-2 text-xs text-teal-100/80">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-300" />
-            Preparing your workspace
-          </div>
+    <section className="relative isolate overflow-hidden bg-[#123b43] text-white">
+      <LandingParallax />
+      <div className="absolute inset-0 z-0 opacity-30" style={{backgroundImage:"linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px)",backgroundSize:"38px 38px"}}/>
+      <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 px-5 py-20 sm:px-8 md:grid-cols-[1.08fr_.92fr] md:py-28">
+        <div><div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-xs font-semibold tracking-wide text-teal-100"><ShieldCheck size={15}/> HOSPITAL HYGIENE &amp; SANITATION MANAGEMENT</div><h1 className="max-w-3xl text-5xl font-bold leading-[1.06] tracking-[-.055em] sm:text-6xl lg:text-7xl">Every space. <span className="text-[#55dfb5]">Every clean.</span> Every record.</h1><p className="mt-7 max-w-xl text-base leading-8 text-teal-50/75 sm:text-lg">Hospisafe helps hospital teams organise daily sanitation routines, respond to special cleaning needs, complete area-specific checklists and verify every job.</p><div className="mt-9 flex flex-col gap-3 sm:flex-row"><Link href="/login" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#48d5ac] px-6 py-3.5 text-sm font-bold text-[#123b43] shadow-lg shadow-black/10 transition hover:bg-[#65e3bd]">Open your workspace <ArrowRight size={17}/></Link><a href="#features" className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">Explore features</a></div><div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-teal-100/65"><span className="flex items-center gap-2"><CheckCircle2 size={14}/> Daily cleaning routines</span><span className="flex items-center gap-2"><CheckCircle2 size={14}/> Staff checklists</span><span className="flex items-center gap-2"><CheckCircle2 size={14}/> Verified records</span></div></div>
+        <div className="relative mx-auto w-full max-w-[510px]" style={{ transform: "translateZ(0)" }}>
+          <div className="rounded-[28px] border border-white/15 bg-white/10 p-3 shadow-2xl shadow-black/25 backdrop-blur"><div className="rounded-[20px] bg-[#f7fbf9] p-5 text-[#153a40] sm:p-6"><div className="flex items-center justify-between border-b border-[#e5efeb] pb-4"><div className="flex items-center gap-2.5"><img src="/icon.svg" alt="" className="h-9 w-9 rounded-lg"/><div><p className="text-sm font-bold">Hospisafe</p><p className="text-[10px] text-[#829792]">Sanitation operations</p></div></div><span className="rounded-full bg-[#e1f6ed] px-2.5 py-1 text-[10px] font-bold text-[#117d6b]">Live workflow</span></div><div className="grid grid-cols-3 gap-2 py-5"><div className="rounded-xl bg-white p-3 shadow-sm"><p className="text-[10px] text-[#829792]">Work</p><p className="mt-1 text-lg font-bold">Assigned</p></div><div className="rounded-xl bg-white p-3 shadow-sm"><p className="text-[10px] text-[#829792]">Schedule</p><p className="mt-1 text-lg font-bold">Daily</p></div><div className="rounded-xl bg-white p-3 shadow-sm"><p className="text-[10px] text-[#829792]">Review</p><p className="mt-1 text-lg font-bold">Verified</p></div></div><div className="space-y-3"><div className="flex items-center gap-3 rounded-xl border border-[#e4efea] bg-white p-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-[#e4f6ef] text-[#117d6b]"><CalendarClock size={19}/></span><div className="min-w-0 flex-1"><p className="text-xs font-bold">Daily washroom round</p><p className="text-[10px] text-[#829792]">Assigned · Due 08:00</p></div><span className="rounded-full bg-[#eaf7f1] px-2 py-1 text-[9px] font-bold text-[#117d6b]">Routine</span></div><div className="flex items-center gap-3 rounded-xl border border-[#e4efea] bg-white p-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-[#fff1e7] text-[#b9712d]"><ClipboardCheck size={19}/></span><div className="min-w-0 flex-1"><p className="text-xs font-bold">Disinfection checklist</p><p className="text-[10px] text-[#829792]">8 steps · Staff submission</p></div><span className="text-[10px] font-bold text-[#159b82]">Track</span></div><div className="flex items-center gap-3 rounded-xl border border-[#e4efea] bg-white p-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-[#eef0ff] text-[#5c67b3]"><BadgeCheck size={19}/></span><div className="min-w-0 flex-1"><p className="text-xs font-bold">Supervisor review</p><p className="text-[10px] text-[#829792]">Completed · Ready to verify</p></div><CheckCircle2 size={17} className="text-[#159b82]"/></div></div><p className="mt-5 text-center text-[10px] font-medium text-[#829792]">From assigned cleaning to verified hygiene work</p></div></div>
+          <div className="absolute -bottom-5 -left-5 hidden rounded-2xl border border-white/15 bg-[#1e5557] p-4 shadow-xl sm:block"><div className="flex items-center gap-2 text-xs font-semibold text-white"><Workflow size={16} className="text-[#55dfb5]"/> Clear ownership for every sanitation task</div></div>
         </div>
-        <div className="absolute bottom-8 text-[10px] uppercase tracking-[.28em] text-teal-100/50">Every space. Every clean. Every record.</div>
-      </main>
-    );
-  }
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setNotice("Sign-in is a visual starter for now. Authentication will be connected in the next build step.");
-  }
-
-  return (
-    <main className="min-h-[100svh] bg-[#f5faf8]">
-      <div className="mx-auto grid min-h-[100svh] max-w-7xl lg:grid-cols-[1.05fr_.95fr]">
-        <section className="relative hidden overflow-hidden bg-[#123b43] p-12 text-white lg:flex lg:flex-col lg:justify-between">
-          <div className="grid-pattern absolute inset-0 opacity-50" />
-          <div className="splash-orb absolute -left-36 top-1/4 h-[520px] w-[520px]" />
-          <div className="relative flex items-center gap-3">
-            <BrandMark />
-            <div>
-              <div className="text-xl font-bold tracking-tight">Hospisafe</div>
-              <div className="text-xs text-teal-100/70">Hospital hygiene operations</div>
-            </div>
-          </div>
-          <div className="relative max-w-xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs text-teal-100">
-              <Sparkles size={14} /> A clearer view of hospital hygiene
-            </div>
-            <h1 className="text-5xl font-semibold leading-[1.12] tracking-[-.045em] xl:text-6xl">
-              Every space deserves <span className="text-emerald-300">care.</span>
-            </h1>
-            <p className="mt-6 max-w-md text-base leading-7 text-teal-50/75">
-              Coordinate sanitation tasks, document cleaning activity, and keep teams aligned across your hospital.
-            </p>
-            <div className="mt-10 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-white/10 bg-white/[.07] p-4">
-                <ShieldCheck className="mb-3 text-emerald-300" size={22} />
-                <div className="font-medium">Accountable tasks</div>
-                <div className="mt-1 text-xs text-teal-50/60">Clear records and ownership</div>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[.07] p-4">
-                <Activity className="mb-3 text-emerald-300" size={22} />
-                <div className="font-medium">Live visibility</div>
-                <div className="mt-1 text-xs text-teal-50/60">A shared view of progress</div>
-              </div>
-            </div>
-          </div>
-          <div className="relative text-xs text-teal-100/50">HOSPISAFE · HYGIENE OPERATIONS PLATFORM</div>
-        </section>
-
-        <section className="flex items-center justify-center px-5 py-10 sm:px-10">
-          <div className="w-full max-w-md">
-            <div className="mb-10 flex items-center gap-3 lg:hidden">
-              <BrandMark />
-              <div>
-                <div className="text-xl font-bold tracking-tight">Hospisafe</div>
-                <div className="text-xs text-[#6c8588]">Hospital hygiene operations</div>
-              </div>
-            </div>
-
-            <div className="mb-8">
-              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#e4f6ef] text-[#13866f]">
-                <LockKeyhole size={19} />
-              </div>
-              <p className="text-sm font-semibold text-[#159b82]">WELCOME TO HOSPISAFE</p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-[-.04em] text-[#153a40]">Sign in to continue</h2>
-              <p className="mt-2 text-sm leading-6 text-[#6c8588]">Access your hospital sanitation workspace.</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <label className="block">
-                <span className="mb-2 block text-sm font-medium text-[#244b4f]">Work email</span>
-                <input
-                  type="email"
-                  required
-                  autoComplete="username"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="name@hospital.com"
-                  className="h-12 w-full rounded-xl border border-[#dcebe7] bg-white px-4 text-sm outline-none transition placeholder:text-[#a1b4b1] focus:border-[#159b82] focus:ring-4 focus:ring-[#159b82]/10"
-                />
-              </label>
-              <label className="block">
-                <span className="mb-2 block text-sm font-medium text-[#244b4f]">Password</span>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    placeholder="Enter your password"
-                    className="h-12 w-full rounded-xl border border-[#dcebe7] bg-white px-4 pr-12 text-sm outline-none transition placeholder:text-[#a1b4b1] focus:border-[#159b82] focus:ring-4 focus:ring-[#159b82]/10"
-                  />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? "Hide password" : "Show password"} className="absolute inset-y-0 right-0 grid w-12 place-items-center text-[#78918d] hover:text-[#159b82]">
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </label>
-              <button type="submit" className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#117d6b] px-4 text-sm font-semibold text-white shadow-lg shadow-[#117d6b]/15 transition hover:bg-[#0e6b5c] active:scale-[.99]">
-                Continue <ArrowRight size={17} />
-              </button>
-              {notice && <p role="status" className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-800">{notice}</p>}
-            </form>
-
-            <div className="mt-7 flex items-start gap-3 rounded-xl border border-[#e1eeeb] bg-white p-4">
-              <div className="mt-0.5 text-[#159b82]"><Check size={17} /></div>
-              <p className="text-xs leading-5 text-[#6c8588]">For authorised hospital personnel. Your access and sanitation records will be protected by role-based permissions once authentication is enabled.</p>
-            </div>
-            <p className="mt-10 text-center text-[11px] text-[#91a5a1]">© {new Date().getFullYear()} Hospisafe. Built for safer care environments.</p>
-          </div>
-        </section>
       </div>
-    </main>
-  );
+    </section>
+
+    <section id="features" className="mx-auto max-w-7xl px-5 py-20 sm:px-8"><div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[.18em] text-[#159b82]">One platform. Connected hygiene operations.</p><h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Everything needed to keep sanitation work on track.</h2><p className="mt-4 text-sm leading-7 text-[#718986]">Bring recurring cleaning, urgent work, staff actions and supervisor review into one consistent process.</p></div><div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{features.map((feature) => { const Icon = feature.icon; return <article key={feature.title} className="rounded-2xl border border-[#e1eeeb] bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[#e6f5ef] text-[#117d6b]"><Icon size={21}/></span><h3 className="mt-5 text-base font-bold">{feature.title}</h3><p className="mt-2 text-sm leading-6 text-[#718986]">{feature.text}</p></article>; })}</div></section>
+
+    <section id="workflow" className="border-y border-[#e1eeeb] bg-white"><div className="mx-auto max-w-7xl px-5 py-20 sm:px-8"><div className="max-w-xl"><p className="text-xs font-bold uppercase tracking-[.18em] text-[#159b82]">How Hospisafe works</p><h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">From sanitation plan to verified cleaning.</h2></div><div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{workflow.map((step) => <div key={step.n} className="rounded-2xl bg-[#f5faf8] p-5"><p className="text-sm font-extrabold text-[#159b82]">{step.n}</p><h3 className="mt-4 font-bold">{step.title}</h3><p className="mt-2 text-sm leading-6 text-[#718986]">{step.text}</p></div>)}</div></div></section>
+
+    <section id="for-teams" className="mx-auto max-w-7xl px-5 py-20 sm:px-8"><div className="grid gap-8 rounded-[28px] bg-[#e7f5ef] p-7 sm:p-10 md:grid-cols-[1fr_auto] md:items-center"><div><p className="text-xs font-bold uppercase tracking-[.18em] text-[#117d6b]">Made for hospital hygiene teams</p><h2 className="mt-3 text-3xl font-bold tracking-tight">Administrators organise. Staff complete. Supervisors verify.</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-[#55736e]">A clear, role-based workflow connects the people planning sanitation work with the people carrying it out and reviewing the result.</p></div><div className="flex flex-col gap-3 sm:flex-row md:flex-col"><Link href="/login" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#117d6b] px-5 py-3 text-sm font-bold text-white">Sign in to Hospisafe <ArrowRight size={16}/></Link><span className="inline-flex items-center justify-center gap-2 text-xs font-semibold text-[#55736e]"><Smartphone size={15}/> Installable PWA</span></div></div></section>
+
+    <footer className="border-t border-[#e1eeeb] bg-white"><div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-7 text-xs text-[#829792] sm:flex-row sm:items-center sm:justify-between sm:px-8"><Brand/><p>© {new Date().getFullYear()} Hospisafe · Every space. Every clean. Every record.</p><Link href="/login" className="font-semibold text-[#117d6b] hover:underline">Administrator sign in</Link></div></footer>
+  </main>;
 }
