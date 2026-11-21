@@ -1,0 +1,13 @@
+{
+  "name": "Hospisafe - Hospital Hygiene Management",
+  "short_name": "Hospisafe",
+  "description": "Hospital hygiene and sanitation management.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5faf8",
+  "theme_color": "#123b43",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
