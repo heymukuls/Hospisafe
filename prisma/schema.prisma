@@ -14,11 +14,23 @@ enum StaffRole {
   STAFF
 }
 
+enum AreaGender {
+  ANY
+  MALE
+  FEMALE
+}
+
 enum AreaType {
   ROOM
   WASHROOM
   LOBBY
   BED
+  COMMON_AREA
+  WAITING_AREA
+  NURSE_STATION
+  TREATMENT_ROOM
+  LABORATORY
+  OPERATION_THEATRE
   OTHER
 }
 
@@ -27,6 +39,15 @@ enum TaskPriority {
   HIGH
   MEDIUM
   LOW
+}
+
+enum TaskType {
+  ROUTINE
+  SPECIAL
+}
+
+enum RoutineFrequency {
+  DAILY
 }
 
 enum TaskStatus {
@@ -38,60 +59,65 @@ enum TaskStatus {
 }
 
 model Hospital {
-  id          String       @id @default(cuid())
-  name        String
-  floors      Floor[]
-  departments Department[]
-  areas       Area[]
-  staff       Staff[]
-  tasks       Task[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id               String            @id @default(cuid())
+  name             String
+  floors           Floor[]
+  departments      Department[]
+  areas            Area[]
+  staff            Staff[]
+  tasks            Task[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  routineSchedules RoutineSchedule[]
 }
 
 model Floor {
-  id          String       @id @default(cuid())
-  name        String
-  hospitalId  String
-  hospital    Hospital     @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
-  departments Department[]
-  areas       Area[]
-  staff       Staff[]
-  tasks       Task[]
-  createdAt   DateTime     @default(now())
+  id               String            @id @default(cuid())
+  name             String
+  hospitalId       String
+  hospital         Hospital          @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  departments      Department[]
+  areas            Area[]
+  staff            Staff[]
+  tasks            Task[]
+  createdAt        DateTime          @default(now())
+  routineSchedules RoutineSchedule[]
 
   @@unique([hospitalId, name])
   @@index([hospitalId])
 }
 
 model Department {
-  id         String   @id @default(cuid())
-  name       String
-  hospitalId String
-  floorId    String?
-  hospital   Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
-  floor      Floor?   @relation(fields: [floorId], references: [id], onDelete: SetNull)
-  areas      Area[]
-  staff      Staff[]
-  tasks      Task[]
-  createdAt  DateTime @default(now())
+  id               String            @id @default(cuid())
+  name             String
+  hospitalId       String
+  floorId          String?
+  hospital         Hospital          @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  floor            Floor?            @relation(fields: [floorId], references: [id], onDelete: SetNull)
+  areas            Area[]
+  staff            Staff[]
+  tasks            Task[]
+  createdAt        DateTime          @default(now())
+  routineSchedules RoutineSchedule[]
 
-  @@unique([hospitalId, name])
+  @@unique([hospitalId, name, floorId])
   @@index([floorId])
 }
 
 model Area {
-  id           String      @id @default(cuid())
-  name         String
-  type         AreaType    @default(OTHER)
-  hospitalId   String
-  floorId      String?
-  departmentId String?
-  hospital     Hospital    @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
-  floor        Floor?      @relation(fields: [floorId], references: [id], onDelete: SetNull)
-  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
-  tasks        Task[]
-  createdAt    DateTime    @default(now())
+  id               String            @id @default(cuid())
+  name             String
+  type             AreaType          @default(OTHER)
+  gender           AreaGender        @default(ANY)
+  hospitalId       String
+  floorId          String?
+  departmentId     String?
+  hospital         Hospital          @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  floor            Floor?            @relation(fields: [floorId], references: [id], onDelete: SetNull)
+  department       Department?       @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  tasks            Task[]
+  createdAt        DateTime          @default(now())
+  routineSchedules RoutineSchedule[]
 
   @@index([hospitalId])
   @@index([floorId])
@@ -99,26 +125,30 @@ model Area {
 }
 
 model Staff {
-  id             String          @id @default(cuid())
-  employeeId     String
-  name           String
-  phone          String?
-  photoUrl       String?
-  role           StaffRole       @default(STAFF)
-  isActive       Boolean         @default(true)
-  hospitalId     String
-  floorId        String?
-  departmentId   String?
-  hospital       Hospital        @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
-  floor          Floor?          @relation(fields: [floorId], references: [id], onDelete: SetNull)
-  department     Department?     @relation(fields: [departmentId], references: [id], onDelete: SetNull)
-  assignedTasks  Task[]          @relation("AssignedTasks")
-  createdTasks   Task[]          @relation("CreatedTasks")
-  verifiedTasks  Task[]          @relation("VerifiedTasks")
-  checklistItems ChecklistItem[] @relation("ChecklistCompletedBy")
-  activities     TaskActivity[]
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  id                       String            @id @default(cuid())
+  employeeId               String
+  name                     String
+  email                    String?           @unique
+  passwordHash             String?           @db.VarChar(255)
+  phone                    String?
+  photoUrl                 String?
+  role                     StaffRole         @default(STAFF)
+  isActive                 Boolean           @default(true)
+  hospitalId               String
+  floorId                  String?
+  departmentId             String?
+  hospital                 Hospital          @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  floor                    Floor?            @relation(fields: [floorId], references: [id], onDelete: SetNull)
+  department               Department?       @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  assignedTasks            Task[]            @relation("AssignedTasks")
+  createdTasks             Task[]            @relation("CreatedTasks")
+  verifiedTasks            Task[]            @relation("VerifiedTasks")
+  checklistItems           ChecklistItem[]   @relation("ChecklistCompletedBy")
+  activities               TaskActivity[]
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+  assignedRoutineSchedules RoutineSchedule[] @relation("AssignedRoutineSchedules")
+  createdRoutineSchedules  RoutineSchedule[] @relation("CreatedRoutineSchedules")
 
   @@unique([hospitalId, employeeId])
   @@index([hospitalId, role])
@@ -127,38 +157,44 @@ model Staff {
 }
 
 model Task {
-  id           String          @id @default(cuid())
-  title        String
-  description  String?         @db.Text
-  priority     TaskPriority    @default(MEDIUM)
-  status       TaskStatus      @default(ASSIGNED)
-  dueAt        DateTime?
-  startedAt    DateTime?
-  completedAt  DateTime?
-  verifiedAt   DateTime?
-  hospitalId   String
-  floorId      String?
-  departmentId String?
-  areaId       String?
-  assignedToId String?
-  createdById  String
-  verifiedById String?
-  hospital     Hospital        @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
-  floor        Floor?          @relation(fields: [floorId], references: [id], onDelete: SetNull)
-  department   Department?     @relation(fields: [departmentId], references: [id], onDelete: SetNull)
-  area         Area?           @relation(fields: [areaId], references: [id], onDelete: SetNull)
-  assignedTo   Staff?          @relation("AssignedTasks", fields: [assignedToId], references: [id], onDelete: SetNull)
-  createdBy    Staff           @relation("CreatedTasks", fields: [createdById], references: [id])
-  verifiedBy   Staff?          @relation("VerifiedTasks", fields: [verifiedById], references: [id], onDelete: SetNull)
-  checklist    ChecklistItem[]
-  activities   TaskActivity[]
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  id                    String           @id @default(cuid())
+  title                 String
+  description           String?          @db.Text
+  priority              TaskPriority     @default(MEDIUM)
+  status                TaskStatus       @default(ASSIGNED)
+  taskType              TaskType         @default(SPECIAL)
+  routineScheduleId     String?
+  routineOccurrenceDate DateTime?
+  dueAt                 DateTime?
+  startedAt             DateTime?
+  completedAt           DateTime?
+  verifiedAt            DateTime?
+  hospitalId            String
+  floorId               String?
+  departmentId          String?
+  areaId                String?
+  assignedToId          String?
+  createdById           String
+  verifiedById          String?
+  routineSchedule       RoutineSchedule? @relation(fields: [routineScheduleId], references: [id], onDelete: SetNull)
+  hospital              Hospital         @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  floor                 Floor?           @relation(fields: [floorId], references: [id], onDelete: SetNull)
+  department            Department?      @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  area                  Area?            @relation(fields: [areaId], references: [id], onDelete: SetNull)
+  assignedTo            Staff?           @relation("AssignedTasks", fields: [assignedToId], references: [id], onDelete: SetNull)
+  createdBy             Staff            @relation("CreatedTasks", fields: [createdById], references: [id])
+  verifiedBy            Staff?           @relation("VerifiedTasks", fields: [verifiedById], references: [id], onDelete: SetNull)
+  checklist             ChecklistItem[]
+  activities            TaskActivity[]
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
 
+  @@unique([routineScheduleId, routineOccurrenceDate])
   @@index([hospitalId, status])
   @@index([assignedToId, status])
   @@index([dueAt])
   @@index([areaId])
+  @@index([taskType, dueAt])
 }
 
 model ChecklistItem {
@@ -188,4 +224,35 @@ model TaskActivity {
 
   @@index([taskId, createdAt])
   @@index([actorId])
+}
+
+model RoutineSchedule {
+  id           String           @id @default(cuid())
+  title        String
+  description  String?          @db.Text
+  priority     TaskPriority     @default(MEDIUM)
+  frequency    RoutineFrequency @default(DAILY)
+  dueTime      String           @default("09:00") @db.VarChar(5)
+  startDate    DateTime
+  endDate      DateTime?
+  isActive     Boolean          @default(true)
+  hospitalId   String
+  floorId      String
+  departmentId String
+  areaId       String
+  assignedToId String?
+  createdById  String
+  hospital     Hospital         @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  floor        Floor            @relation(fields: [floorId], references: [id], onDelete: Cascade)
+  department   Department       @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  area         Area             @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  assignedTo   Staff?           @relation("AssignedRoutineSchedules", fields: [assignedToId], references: [id], onDelete: SetNull)
+  createdBy    Staff            @relation("CreatedRoutineSchedules", fields: [createdById], references: [id], onDelete: Restrict)
+  tasks        Task[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([hospitalId, isActive])
+  @@index([assignedToId])
+  @@index([areaId])
 }
