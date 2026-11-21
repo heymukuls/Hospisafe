@@ -12,7 +12,11 @@ export async function GET(request: NextRequest) {
     where, orderBy: [{ dueAt: "asc" }, { createdAt: "desc" }],
     include: { routineSchedule: { select: { id: true, title: true, frequency: true } }, area: true, floor: true, department: true, assignedTo: { select: { id: true, name: true, employeeId: true } }, checklist: { orderBy: { position: "asc" } }, activities: { orderBy: { createdAt: "desc" }, take: 5, include: { actor: { select: { name: true } } } } },
   });
-  return NextResponse.json({ tasks });
+  const tasksWithEvidence = tasks.map((task) => ({
+    ...task,
+    evidenceUrl: task.activities.find((activity) => activity.action === "EVIDENCE_UPLOADED")?.note ?? null,
+  }));
+  return NextResponse.json({ tasks: tasksWithEvidence });
 }
 
 export async function POST(request: NextRequest) {

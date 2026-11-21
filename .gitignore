@@ -45,3 +45,6 @@ next-env.d.ts
 
 # Uploaded runtime profile pictures; never commit user images
 data/profile-photos/
+
+# Private staff completion photos (stored outside public/)
+/data/task-evidence/

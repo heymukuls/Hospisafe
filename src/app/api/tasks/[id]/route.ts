@@ -38,8 +38,15 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   if (body.action === "complete") {
     if (session.role !== "STAFF") return NextResponse.json({ error: "Only staff can submit task completion." }, { status: 403 });
     if (task.status !== "IN_PROGRESS") return NextResponse.json({ error: "Start the task before submitting it." }, { status: 409 });
+    const checklistCount = await prisma.checklistItem.count({ where: { taskId: id } });
+    if (checklistCount === 0) return NextResponse.json({ error: "This task has no checklist items. Ask your administrator to update it." }, { status: 409 });
     const incompleteCount = await prisma.checklistItem.count({ where: { taskId: id, isCompleted: false } });
     if (incompleteCount > 0) return NextResponse.json({ error: `Complete all checklist items before submitting. ${incompleteCount} remain.` }, { status: 409 });
+    const evidence = await prisma.taskActivity.findFirst({ where: { taskId: id, action: "EVIDENCE_UPLOADED" }, orderBy: { createdAt: "desc" } });
+    const latestChecklistChange = await prisma.taskActivity.findFirst({ where: { taskId: id, action: { in: ["CHECKLIST_ITEM_COMPLETED", "CHECKLIST_ITEM_REOPENED"] } }, orderBy: { createdAt: "desc" } });
+    if (!evidence || (latestChecklistChange && latestChecklistChange.createdAt > evidence.createdAt)) {
+      return NextResponse.json({ error: "Upload a fresh completion photo after checking every checklist item." }, { status: 409 });
+    }
     await prisma.$transaction([
       prisma.task.update({ where: { id }, data: { status: "COMPLETED", completedAt: new Date() } }),
       prisma.taskActivity.create({ data: { taskId: id, actorId: session.staffId, action: "COMPLETED", note: "All checklist items completed and submitted by staff." } }),
